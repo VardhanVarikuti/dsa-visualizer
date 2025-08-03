@@ -53,3 +53,4 @@ We welcome contributions! Please see [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md) fo
 ## 📄 License
 
 MIT License - See LICENSE file for details 
+- **[Licens](LICENSE)**
