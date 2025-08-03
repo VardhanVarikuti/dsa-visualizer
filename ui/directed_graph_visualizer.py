@@ -325,6 +325,8 @@ class DirectedGraphVisualizer:
     def select_algo(self, algo_name):
         self.active_algo = algo_name
         self.message = f"Algorithm '{algo_name}' selected. Click 'Run' to execute."
+        # Rebuild buttons to show/hide Set Start Node button based on selected algorithm
+        self.setup_buttons()
 
     def run_selected_algorithm(self):
         if not self.active_algo:
