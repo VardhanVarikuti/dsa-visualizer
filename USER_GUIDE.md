@@ -17,87 +17,9 @@ Welcome to the DSA Visualizer! This interactive tool helps you understand Data S
 
 ### First Steps
 1. Launch the application
-2. Choose between **Graphs** or **Trees**
+2. Choose between **Trees** or **Graphs**
 3. Select your preferred algorithm type
 4. Follow the on-screen instructions
-
----
-
-## 📊 Graph Algorithms
-
-### Maze/Grid Pathfinding
-**Perfect for understanding search algorithms**
-
-#### How to Use:
-1. Select **Graphs** → **Maze/Grid**
-2. **Click** to place walls
-3. **Right-click** to set start/end points
-4. Choose an algorithm and watch the search!
-
-#### Available Algorithms:
-- **BFS (Breadth-First Search)**: Guarantees shortest path
-- **DFS (Depth-First Search)**: Explores deep paths first
-- **A* Search**: Intelligent search with heuristics
-- **Dijkstra**: Shortest path with weighted edges
-- **Bidirectional BFS**: Search from both ends
-
-### Directed Graphs
-**For understanding graph traversal and analysis**
-
-#### How to Use:
-1. Select **Graphs** → **Directed Graph**
-2. **Click** to add nodes
-3. **Drag** from one node to another to create directed edges
-4. Choose an algorithm and watch the visualization!
-
-#### Available Algorithms:
-- **BFS**: Level-by-level traversal
-- **DFS**: Depth-first exploration
-- **Cycle Detection**: Find cycles in the graph
-- **Topological Sort**: Order nodes for dependency resolution
-- **SCC (Strongly Connected Components)**: Find connected subgraphs
-- **Transitive Closure**: Find all reachable pairs
-- **Shortest Path (BFS)**: Unweighted shortest paths
-
-### Weighted Graphs
-**For understanding shortest path and minimum spanning tree algorithms**
-
-#### How to Use:
-1. Select **Graphs** → **Weighted Graph**
-2. **Click** to add nodes
-3. **Drag** to create edges (weights appear automatically)
-4. **Click on edges** to edit weights
-5. **Set Start/Target nodes** for pathfinding algorithms
-6. Choose an algorithm and watch the computation!
-
-#### Available Algorithms:
-- **Dijkstra**: Single-source shortest paths
-- **Bellman-Ford**: Handles negative weights
-- **Floyd-Warshall**: All-pairs shortest paths
-- **Prim's MST**: Minimum spanning tree
-- **Kruskal's MST**: Alternative MST algorithm
-- **A* Search**: Heuristic shortest path
-- **Johnson's**: All-pairs shortest paths (sparse graphs)
-- **SPFA**: Shortest path with negative weights
-- **TopoSort+Relax**: Shortest paths in DAGs
-
-### Undirected Graphs
-**For understanding connectivity and graph properties**
-
-#### How to Use:
-1. Select **Graphs** → **Undirected Graph**
-2. **Click** to add nodes
-3. **Drag** to create undirected edges
-4. Choose an algorithm and explore!
-
-#### Available Algorithms:
-- **BFS**: Level-by-level traversal
-- **DFS**: Depth-first exploration
-- **Connected Components**: Find all connected groups
-- **Cycle Detection**: Detect cycles in undirected graphs
-- **Articulation Points**: Find critical nodes
-- **Bridges**: Find critical edges
-- **Bipartite Check**: Check if graph is bipartite
 
 ---
 
@@ -173,6 +95,99 @@ Welcome to the DSA Visualizer! This interactive tool helps you understand Data S
 - **Flexible structure**: Any number of children
 - **BFS traversal**: Level-by-level exploration
 - **DFS traversal**: Depth-first exploration
+
+---
+
+## 📊 Graph Algorithms
+
+### Maze/Grid Pathfinding
+**Perfect for understanding search algorithms**
+
+#### How to Use:
+1. Select **Graphs** → **Maze/Grid**
+2. **Click** to place walls
+3. **Right-click** to set start/end points
+4. Choose an algorithm and watch the search!
+
+#### Available Algorithms:
+- **BFS (Breadth-First Search)**: Guarantees shortest path
+- **DFS (Depth-First Search)**: Explores deep paths first
+- **A* Search**: Intelligent search with heuristics
+- **Dijkstra**: Shortest path with weighted edges
+- **Bidirectional BFS**: Search from both ends
+
+### N-Queens Backtracking
+**For understanding constraint satisfaction and backtracking**
+
+#### How to Use:
+1. Select **Graphs** → **N-Queens**
+2. **Enter board size** (4-16)
+3. **Step through** or **auto-solve** the puzzle
+4. Watch the backtracking algorithm in action!
+
+#### Features:
+- **Interactive solving**: Step-by-step visualization
+- **Auto-solve**: Watch the complete solution
+- **Multiple solutions**: Explore different valid arrangements
+- **Constraint satisfaction**: See how conflicts are resolved
+
+### Undirected Graphs
+**For understanding connectivity and graph properties**
+
+#### How to Use:
+1. Select **Graphs** → **Undirected Graph**
+2. **Click** to add nodes
+3. **Drag** to create undirected edges
+4. Choose an algorithm and explore!
+
+#### Available Algorithms:
+- **BFS**: Level-by-level traversal
+- **DFS**: Depth-first exploration
+- **Connected Components**: Find all connected groups
+- **Cycle Detection**: Detect cycles in undirected graphs
+- **Articulation Points**: Find critical nodes
+- **Bridges**: Find critical edges
+- **Bipartite Check**: Check if graph is bipartite
+
+### Directed Graphs
+**For understanding graph traversal and analysis**
+
+#### How to Use:
+1. Select **Graphs** → **Directed Graph**
+2. **Click** to add nodes
+3. **Drag** from one node to another to create directed edges
+4. Choose an algorithm and watch the visualization!
+
+#### Available Algorithms:
+- **BFS**: Level-by-level traversal
+- **DFS**: Depth-first exploration
+- **Cycle Detection**: Find cycles in the graph
+- **Topological Sort**: Order nodes for dependency resolution
+- **SCC (Strongly Connected Components)**: Find connected subgraphs
+- **Transitive Closure**: Find all reachable pairs
+- **Shortest Path (BFS)**: Unweighted shortest paths
+
+### Weighted Graphs
+**For understanding shortest path and minimum spanning tree algorithms**
+
+#### How to Use:
+1. Select **Graphs** → **Weighted Graph**
+2. **Click** to add nodes
+3. **Drag** to create edges (weights appear automatically)
+4. **Click on edges** to edit weights
+5. **Set Start/Target nodes** for pathfinding algorithms
+6. Choose an algorithm and watch the computation!
+
+#### Available Algorithms:
+- **Dijkstra**: Single-source shortest paths
+- **Bellman-Ford**: Handles negative weights
+- **Floyd-Warshall**: All-pairs shortest paths
+- **Prim's MST**: Minimum spanning tree
+- **Kruskal's MST**: Alternative MST algorithm
+- **A* Search**: Heuristic shortest path
+- **Johnson's**: All-pairs shortest paths (sparse graphs)
+- **SPFA**: Shortest path with negative weights
+- **TopoSort+Relax**: Shortest paths in DAGs
 
 ---
 

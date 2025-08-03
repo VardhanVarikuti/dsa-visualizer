@@ -4,17 +4,17 @@ A comprehensive Python framework for visualizing Data Structures and Algorithms 
 
 ## ✨ What's Included
 
+### **Tree Algorithms**
+- **Binary Trees**: BST, AVL, Generic Binary Tree
+- **Specialized Trees**: Trie, N-ary Tree
+- **Operations**: Insert, Delete, Traversals, LCA, Search
+
 ### **Graph Algorithms** (20+ algorithms)
 - **Pathfinding**: BFS, DFS, A*, Dijkstra, Bidirectional BFS
 - **Shortest Path**: Dijkstra, Bellman-Ford, Floyd-Warshall, Johnson, SPFA
 - **Minimum Spanning Tree**: Prim's, Kruskal's
 - **Graph Analysis**: Topological Sort, SCC, Cycle Detection, Connected Components
 - **Specialized**: Articulation Points, Bridges, Bipartite Check
-
-### **Tree Algorithms**
-- **Binary Trees**: BST, AVL, Generic Binary Tree
-- **Specialized Trees**: Trie, N-ary Tree
-- **Operations**: Insert, Delete, Traversals, LCA, Search
 
 ### **Interactive Features**
 - **Real-time animations** with step-by-step visualization
