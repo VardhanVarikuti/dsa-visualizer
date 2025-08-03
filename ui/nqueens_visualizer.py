@@ -82,10 +82,11 @@ def run_nqueens_visualizer():
     N = None
     input_value = ''
     error_msg = ''
-    message = 'N: Set board size | S: Step | A: Auto-solve | R: Reset | Q: Quit'
+    message = 'N: Set board size | S: Step | A: Auto-solve | R: Reset | Q: Quit | H: Help'
     board = []
     gen = None
     highlight = set()
+    show_help = False
     running = True
     prompt_n = True
     auto_solving = False
@@ -100,6 +101,42 @@ def run_nqueens_visualizer():
             show_message(win, font, message, DARK_BLUE, y_abs=HEIGHT-80)
         if error_msg:
             show_message(win, font, error_msg, ERROR_COLOR, y_abs=HEIGHT-50)
+        
+        # Draw help overlay if needed
+        if show_help:
+            help_surface = pygame.Surface((WIDTH, HEIGHT))
+            help_surface.set_alpha(200)
+            help_surface.fill((240, 240, 240))
+            win.blit(help_surface, (0, 0))
+            
+            help_font = pygame.font.SysFont(None, 28)
+            help_lines = [
+                "N-QUEENS VISUALIZER - HELP",
+                "",
+                "CONTROLS:",
+                "• N: Set board size (4-16)",
+                "• S: Step through backtracking",
+                "• A: Auto-solve with animation",
+                "• R: Reset current board",
+                "• Q: Quit the visualizer",
+                "• H: Toggle this help overlay",
+                "",
+                "FEATURES:",
+                "• Interactive N-Queens backtracking",
+                "• Step-by-step solution visualization",
+                "• Auto-solve with animation",
+                "• Multiple solution exploration",
+                "",
+                "ALGORITHM:",
+                "• Uses backtracking to find valid solutions",
+                "• Queens cannot attack each other",
+                "• Shows placement and removal steps"
+            ]
+            
+            for i, line in enumerate(help_lines):
+                color = (50, 50, 150) if i == 0 else (30, 30, 80)
+                text = help_font.render(line, True, color)
+                win.blit(text, (50, 50 + i * 30))
         
         pygame.display.update()
 
@@ -155,6 +192,8 @@ def run_nqueens_visualizer():
                 else:
                     if event.key == pygame.K_q:
                         running = False
+                    elif event.key == pygame.K_h:
+                        show_help = not show_help
                     elif event.key == pygame.K_r:
                         board = [-1]*N
                         gen = None

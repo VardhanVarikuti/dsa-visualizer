@@ -114,8 +114,9 @@ def run_tree_visualizer(mode='BST'):
     font = pygame.font.SysFont(None, FONT_SIZE)
     root = None
     input_value = ''
-    message = f'Type number and press I=Insert, D=Delete, T=Traverse, R=Reset, Q=Quit ({mode})'
+    message = f'Type number and press I=Insert, D=Delete, T=Traverse, R=Reset, Q=Quit, H:Help ({mode})'
     error_msg = ''
+    show_help = False
     running = True
     while running:
         win.fill(WHITE)
@@ -125,6 +126,39 @@ def run_tree_visualizer(mode='BST'):
             show_message(win, font, error_msg, ERROR_COLOR, -30)
         inp = font.render('Input: ' + input_value, True, RED)
         win.blit(inp, (10, HEIGHT-70))
+        
+        # Draw help overlay if needed
+        if show_help:
+            help_surface = pygame.Surface((WIDTH, HEIGHT))
+            help_surface.set_alpha(200)
+            help_surface.fill((240, 240, 240))
+            win.blit(help_surface, (0, 0))
+            
+            help_font = pygame.font.SysFont(None, 28)
+            help_lines = [
+                f"{mode.upper()} TREE VISUALIZER - HELP",
+                "",
+                "CONTROLS:",
+                "• Type numbers to input values",
+                "• I: Insert the input value",
+                "• D: Delete the input value", 
+                "• T: Show all traversals (Inorder, Preorder, Postorder)",
+                "• R: Reset the tree",
+                "• Q: Quit the visualizer",
+                "• H: Toggle this help overlay",
+                "",
+                "FEATURES:",
+                f"• {mode} tree with automatic balancing (AVL only)",
+                "• Animated traversal visualization",
+                "• Real-time tree updates",
+                "• Error handling and validation"
+            ]
+            
+            for i, line in enumerate(help_lines):
+                color = (50, 50, 150) if i == 0 else (30, 30, 80)
+                text = help_font.render(line, True, color)
+                win.blit(text, (50, 50 + i * 30))
+        
         pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -134,6 +168,8 @@ def run_tree_visualizer(mode='BST'):
                 try:
                     if event.key == pygame.K_q:
                         running = False
+                    elif event.key == pygame.K_h:
+                        show_help = not show_help
                     elif event.key == pygame.K_r:
                         root = None
                         input_value = ''

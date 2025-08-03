@@ -129,9 +129,10 @@ def run_generic_tree_visualizer():
     lca_value1 = ''
     lca_value2 = ''
     lca_collecting_second = False
-    message = 'I:Insert  D:Delete  L:LCA  R:Reset  Q:Quit  (Insert: value, parent, side [L/R], ENTER)'
+    message = 'I:Insert  D:Delete  L:LCA  R:Reset  Q:Quit  H:Help  (Insert: value, parent, side [L/R], ENTER)'
     error_msg = ''
     lca_result = ''
+    show_help = False
     running = True
     lca_mode = False
     insert_mode = False
@@ -168,6 +169,48 @@ def run_generic_tree_visualizer():
         else:
             inp = font.render(f'Value: {input_value}', True, RED)
             win.blit(inp, (10, HEIGHT-70))
+        
+        # Draw help overlay if needed
+        if show_help:
+            help_surface = pygame.Surface((WIDTH, HEIGHT))
+            help_surface.set_alpha(200)
+            help_surface.fill((240, 240, 240))
+            win.blit(help_surface, (0, 0))
+            
+            help_font = pygame.font.SysFont(None, 28)
+            help_lines = [
+                "GENERIC BINARY TREE VISUALIZER - HELP",
+                "",
+                "CONTROLS:",
+                "• Type numbers to input values",
+                "• I: Enter insert mode",
+                "• D: Delete the input value",
+                "• L: Enter LCA (Lowest Common Ancestor) mode",
+                "• R: Reset the tree",
+                "• Q: Quit the visualizer",
+                "• H: Toggle this help overlay",
+                "",
+                "INSERT MODE:",
+                "• TAB: Switch between value, parent, side",
+                "• ENTER: Complete insertion",
+                "• L/R: Set left or right side",
+                "",
+                "LCA MODE:",
+                "• Type two values separated by comma/space",
+                "• ENTER: Calculate LCA",
+                "",
+                "FEATURES:",
+                "• Generic binary tree operations",
+                "• Animated LCA path visualization",
+                "• Flexible parent-child relationships",
+                "• Dynamic layout adaptation"
+            ]
+            
+            for i, line in enumerate(help_lines):
+                color = (50, 50, 150) if i == 0 else (30, 30, 80)
+                text = help_font.render(line, True, color)
+                win.blit(text, (50, 50 + i * 30))
+        
         pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -177,6 +220,8 @@ def run_generic_tree_visualizer():
                 try:
                     if event.key == pygame.K_q:
                         running = False
+                    elif event.key == pygame.K_h:
+                        show_help = not show_help
                     elif event.key == pygame.K_r:
                         root = None
                         input_value = ''

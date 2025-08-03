@@ -44,8 +44,9 @@ class GraphVisualizer:
         self.dragging = False
         self.drag_start = None
         self.selected_edge = None
-        self.message = "Click to add node | Drag to add edge | Del: delete | T: TopoSort | B: Bellman-Ford | R: Reset | Q: Quit"
+        self.message = "Click to add node | Drag to add edge | Del: delete | T: TopoSort | B: Bellman-Ford | R: Reset | Q: Quit | H: Help"
         self.error_msg = ''
+        self.show_help = False
         self.animating = False
         self.animation_steps = []
         self.animation_index = 0
@@ -61,8 +62,9 @@ class GraphVisualizer:
         self.selected_edge = None
         self.dragging = False
         self.drag_start = None
-        self.message = "Click to add node | Drag to add edge | Del: delete | T: TopoSort | B: Bellman-Ford | R: Reset | Q: Quit"
+        self.message = "Click to add node | Drag to add edge | Del: delete | T: TopoSort | B: Bellman-Ford | R: Reset | Q: Quit | H: Help"
         self.error_msg = ''
+        self.show_help = False
         self.animating = False
         self.animation_steps = []
         self.animation_index = 0
@@ -143,6 +145,45 @@ class GraphVisualizer:
         self.show_message(self.message, INSTR_COLOR, y_abs=HEIGHT-60)
         if self.error_msg:
             self.show_message(self.error_msg, ERROR_COLOR, y_abs=HEIGHT-30)
+        
+        # Draw help overlay if needed
+        if self.show_help:
+            help_surface = pygame.Surface((WIDTH, HEIGHT))
+            help_surface.set_alpha(200)
+            help_surface.fill((240, 240, 240))
+            self.win.blit(help_surface, (0, 0))
+            
+            help_font = pygame.font.SysFont(None, 28)
+            help_lines = [
+                "DIRECTED GRAPH VISUALIZER - HELP",
+                "",
+                "CONTROLS:",
+                "• Left-click: Add node or select node",
+                "• Drag from node: Create edge",
+                "• Right-click: Select edge",
+                "• Delete/Backspace: Delete selected",
+                "• T: Run Topological Sort",
+                "• B: Run Bellman-Ford (requires source)",
+                "• R: Reset the graph",
+                "• Q: Quit the visualizer",
+                "• H: Toggle this help overlay",
+                "",
+                "FEATURES:",
+                "• Interactive directed graph building",
+                "• Topological sorting with cycle detection",
+                "• Bellman-Ford shortest path algorithm",
+                "• Animated algorithm visualization",
+                "",
+                "ALGORITHMS:",
+                "• Topological Sort: Orders nodes in DAG",
+                "• Bellman-Ford: Finds shortest paths"
+            ]
+            
+            for i, line in enumerate(help_lines):
+                color = (50, 50, 150) if i == 0 else (30, 30, 80)
+                text = help_font.render(line, True, color)
+                self.win.blit(text, (50, 50 + i * 30))
+        
         pygame.display.update()
 
     def draw_arrow(self, start, end, color, weight=1):
@@ -251,6 +292,8 @@ class GraphVisualizer:
                     self.error_msg = ''
                     if event.key == pygame.K_q:
                         pygame.quit(); sys.exit()
+                    elif event.key == pygame.K_h:
+                        self.show_help = not self.show_help
                     elif event.key == pygame.K_r:
                         self.reset()
                     elif event.key == pygame.K_DELETE or event.key == pygame.K_BACKSPACE:

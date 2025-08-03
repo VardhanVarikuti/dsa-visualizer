@@ -64,8 +64,9 @@ def run_trie_visualizer():
     root = TrieNode()
     input_value = ''
     result_msg = ''
-    message = 'Type word, then I=Insert, S=Search, P=Prefix, R=Reset, Q=Quit'
+    message = 'Type word, then I=Insert, S=Search, P=Prefix, R=Reset, Q=Quit, H:Help'
     error_msg = ''
+    show_help = False
     running = True
     while running:
         win.fill(WHITE)
@@ -77,6 +78,40 @@ def run_trie_visualizer():
             show_message(win, font, error_msg, ERROR_COLOR, -30)
         inp = font.render(f'Word: {input_value}', True, RED)
         win.blit(inp, (10, HEIGHT-70))
+        
+        # Draw help overlay if needed
+        if show_help:
+            help_surface = pygame.Surface((WIDTH, HEIGHT))
+            help_surface.set_alpha(200)
+            help_surface.fill((240, 240, 240))
+            win.blit(help_surface, (0, 0))
+            
+            help_font = pygame.font.SysFont(None, 28)
+            help_lines = [
+                "TRIE VISUALIZER - HELP",
+                "",
+                "CONTROLS:",
+                "• Type letters/numbers to input words",
+                "• I: Insert the input word",
+                "• S: Search for the input word",
+                "• P: Find all words with the input prefix",
+                "• D: Delete the input word",
+                "• R: Reset the trie",
+                "• Q: Quit the visualizer",
+                "• H: Toggle this help overlay",
+                "",
+                "FEATURES:",
+                "• Animated search visualization",
+                "• Prefix matching with results",
+                "• Real-time trie updates",
+                "• Error handling and validation"
+            ]
+            
+            for i, line in enumerate(help_lines):
+                color = (50, 50, 150) if i == 0 else (30, 30, 80)
+                text = help_font.render(line, True, color)
+                win.blit(text, (50, 50 + i * 30))
+        
         pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -86,6 +121,8 @@ def run_trie_visualizer():
                 try:
                     if event.key == pygame.K_q:
                         running = False
+                    elif event.key == pygame.K_h:
+                        show_help = not show_help
                     elif event.key == pygame.K_r:
                         root = TrieNode()
                         input_value = ''
