@@ -1,0 +1,92 @@
+name: Build Windows Executable
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pygame pyinstaller
+        
+    - name: Build Windows executable
+      run: |
+        pyinstaller --onefile --windowed --name "DSA Visualizer" main.py
+        
+    - name: Create distribution package
+      run: |
+        mkdir "DSA Visualizer Windows"
+        copy "dist\DSA Visualizer.exe" "DSA Visualizer Windows\"
+        copy README.md "DSA Visualizer Windows\"
+        copy USER_GUIDE.md "DSA Visualizer Windows\"
+        copy ALGORITHM_COMPLEXITY.md "DSA Visualizer Windows\"
+        copy DEVELOPER_GUIDE.md "DSA Visualizer Windows\"
+        copy LICENSE "DSA Visualizer Windows\"
+        
+        # Create launcher script
+        echo @echo off > "DSA Visualizer Windows\Launch DSA Visualizer.bat"
+        echo echo Starting DSA Visualizer... >> "DSA Visualizer Windows\Launch DSA Visualizer.bat"
+        echo start "" "DSA Visualizer.exe" >> "DSA Visualizer Windows\Launch DSA Visualizer.bat"
+        
+    - name: Create ZIP archive
+      run: |
+        powershell Compress-Archive -Path "DSA Visualizer Windows" -DestinationPath "DSA Visualizer Windows.zip" -Force
+        
+    - name: Upload Windows executable
+      uses: actions/upload-artifact@v3
+      with:
+        name: DSA-Visualizer-Windows
+        path: DSA Visualizer Windows.zip
+        
+    - name: Create Release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: DSA Visualizer Windows.zip
+        body: |
+          ## 🪟 Windows Executable Release
+          
+          ### What's New
+          - **Standalone Windows executable** - No Python/Pygame required!
+          - **Complete package** with all documentation
+          - **Easy launcher script** for simple startup
+          
+          ### How to Use
+          1. Download `DSA Visualizer Windows.zip`
+          2. Extract the ZIP file
+          3. Double-click `Launch DSA Visualizer.bat`
+          4. Or run `DSA Visualizer.exe` directly
+          
+          ### Features
+          - **Tree Algorithms**: BST, AVL, Trie, N-ary, Generic Binary
+          - **Graph Algorithms**: BFS, DFS, A*, Dijkstra, MST, Topological Sort
+          - **Grid/Maze Algorithms**: Pathfinding with multiple algorithms
+          - **N-Queens**: Backtracking visualization
+          - **Interactive UI**: Click to add nodes, run algorithms, visualize steps
+          
+          ### Technical Details
+          - **Platform**: Windows 10/11
+          - **Size**: ~25MB executable
+          - **Dependencies**: None (standalone)
+          - **License**: MIT (open source)
+          
+          ---
+          
+          **Download and start visualizing algorithms! 🚀**
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 

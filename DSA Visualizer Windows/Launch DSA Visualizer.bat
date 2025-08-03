@@ -1,0 +1,3 @@
+@echo off
+echo Starting DSA Visualizer...
+start "" "DSA Visualizer.exe"

@@ -1,0 +1,13 @@
+WINDOWS BUILD INSTRUCTIONS
+==========================
+
+To build the Windows executable on a Windows machine:
+
+1. Install Python 3.8+ from https://python.org
+2. Install PyInstaller: pip install pyinstaller
+3. Install Pygame: pip install pygame
+4. Run: pyinstaller --onefile --windowed --name "DSA Visualizer" main.py
+5. Copy the executable from dist/ to this folder
+6. Test by running: DSA Visualizer.exe
+
+The executable will be created in the dist/ folder.
