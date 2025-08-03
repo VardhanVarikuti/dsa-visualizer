@@ -149,6 +149,8 @@ class UndirectedGraphVisualizer:
         self.animating = False
         self.animation_steps = []
         self.animation_index = 0
+        # Rebuild buttons to show/hide Set Start Node button based on selected algorithm
+        self.setup_buttons()
         # Do NOT clear the graph here! Only update UI state.
         self.set_mode(MODE_EDIT)
 
