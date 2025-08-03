@@ -148,7 +148,6 @@ def run_tree_visualizer(mode='BST'):
                 "• H: Toggle this help overlay",
                 "",
                 "FEATURES:",
-                f"• {mode} tree with automatic balancing (AVL only)",
                 "• Animated traversal visualization",
                 "• Real-time tree updates",
                 "• Error handling and validation"
