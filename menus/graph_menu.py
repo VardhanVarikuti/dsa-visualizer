@@ -6,9 +6,9 @@ def graph_menu():
         print("\n--- Graph Algorithms ---")
         print("[1] Maze/Grid")
         print("[2] N-Queens")
-        print("[3] Directed Graph")
-        print("[4] Weighted Graph")
-        print("[5] Undirected Graph")
+        print("[3] Undirected Graph")
+        print("[4] Directed Graph")
+        print("[5] Weighted Graph")
         print("[0] Back")
         choice = input("Select an option: ").strip()
         if choice == '1':
@@ -19,11 +19,11 @@ def graph_menu():
             from ui.nqueens_visualizer import run_nqueens_visualizer
             run_nqueens_visualizer()
         elif choice == '3':
-            directed_graph_menu()
-        elif choice == '4':
-            weighted_graph_menu()
-        elif choice == '5':
             undirected_graph_menu()
+        elif choice == '4':
+            directed_graph_menu()
+        elif choice == '5':
+            weighted_graph_menu()
         elif choice == '0':
             break
         else:
