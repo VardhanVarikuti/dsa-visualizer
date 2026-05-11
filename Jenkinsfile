@@ -11,13 +11,20 @@ spec:
     securityContext:
       privileged: true
     command:
-    - cat
+    - dockerd-entrypoint.sh
+    args:
+    - --host=tcp://127.0.0.1:2375
+    - --host=unix:///var/run/docker.sock
     tty: true
+
+  - name: jnlp
+    image: jenkins/inbound-agent:latest
 '''
         }
     }
 
     environment {
+        DOCKER_HOST = 'tcp://127.0.0.1:2375'
         DOCKER_IMAGE = 'varikutivardhan/dsa-visualizer'
         DOCKER_TAG = "${BUILD_NUMBER}"
     }
@@ -30,16 +37,16 @@ spec:
             }
         }
 
-        stage('Project Info') {
-            steps {
-                sh 'ls -la'
-            }
-        }
-
-        stage('Docker Version') {
+        stage('Docker Info') {
             steps {
                 container('docker') {
-                    sh 'docker version'
+                    sh '''
+                    echo "Waiting for Docker daemon..."
+                    sleep 20
+
+                    docker version
+                    docker info
+                    '''
                 }
             }
         }
@@ -54,7 +61,7 @@ spec:
             }
         }
 
-        stage('Docker Images') {
+        stage('List Docker Images') {
             steps {
                 container('docker') {
                     sh 'docker images'
