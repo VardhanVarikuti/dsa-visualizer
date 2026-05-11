@@ -8,12 +8,17 @@ spec:
   containers:
   - name: docker
     image: docker:24.0.5-dind
+
     securityContext:
       privileged: true
+
     env:
     - name: DOCKER_TLS_CERTDIR
       value: ""
-    
+
+    command:
+    - dockerd-entrypoint.sh
+
     tty: true
 
   - name: jnlp
@@ -54,8 +59,31 @@ spec:
             steps {
                 container('docker') {
                     sh '''
-                    docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
+                    docker build \
+                    -t ${DOCKER_IMAGE}:${DOCKER_TAG} \
+                    -t ${DOCKER_IMAGE}:latest .
                     '''
+                }
+            }
+        }
+
+        stage('Push to DockerHub') {
+            steps {
+                container('docker') {
+                    withCredentials([usernamePassword(
+                        credentialsId: 'dockerhub-credentials',
+                        usernameVariable: 'DOCKER_USER',
+                        passwordVariable: 'DOCKER_PASS'
+                    )]) {
+
+                        sh '''
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+
+                        docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
+
+                        docker push ${DOCKER_IMAGE}:latest
+                        '''
+                    }
                 }
             }
         }
