@@ -3,8 +3,8 @@ provider "aws" {
 }
 
 resource "aws_security_group" "dsa_visualizer_sg" {
-  name        = "dsa-visualizer-sg"
-  description = "Security group for DSA Visualizer EC2 instance"
+  name        = "dsa-sg"
+  description = "Security group for DSA Visualizer DevOps Project"
 
   ingress {
     from_port   = 22
@@ -27,11 +27,36 @@ resource "aws_security_group" "dsa_visualizer_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    from_port   = 3000
+    to_port     = 3000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 9090
+    to_port     = 9090
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "dsa-sg"
   }
 }
 
@@ -42,15 +67,22 @@ resource "aws_instance" "dsa_visualizer_server" {
   vpc_security_group_ids = [aws_security_group.dsa_visualizer_sg.id]
 
   tags = {
-    Name = "dsa-visualizer-server"
+    Name = "dsa-visualizer-devops"
   }
 
   user_data = <<-EOF
               #!/bin/bash
-              sudo yum update -y
-              sudo yum install -y docker
-              sudo systemctl start docker
-              sudo systemctl enable docker
-              sudo usermod -aG docker ec2-user
+
+              apt update -y
+              apt install -y docker.io curl unzip
+
+              systemctl start docker
+              systemctl enable docker
+
+              usermod -aG docker ubuntu
               EOF
+}
+
+output "public_ip" {
+  value = aws_instance.dsa_visualizer_server.public_ip
 }
