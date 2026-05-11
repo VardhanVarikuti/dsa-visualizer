@@ -1,5 +1,21 @@
 pipeline {
-    agent any
+    agent {
+        kubernetes {
+            yaml '''
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: docker
+    image: docker:24.0.5-dind
+    securityContext:
+      privileged: true
+    command:
+    - cat
+    tty: true
+'''
+        }
+    }
 
     environment {
         DOCKER_IMAGE = 'varikutivardhan/dsa-visualizer'
@@ -16,42 +32,33 @@ pipeline {
 
         stage('Project Info') {
             steps {
-                sh '''
-                echo "Listing project files..."
-                ls -la
-                '''
+                sh 'ls -la'
             }
         }
 
-        stage('Validate Kubernetes Files') {
+        stage('Docker Version') {
             steps {
-                sh '''
-                echo "Checking Kubernetes manifests..."
-                ls kubernetes
-                '''
+                container('docker') {
+                    sh 'docker version'
+                }
             }
         }
 
-        stage('Docker Build') {
+        stage('Build Docker Image') {
             steps {
-                sh '''
-                echo "Building Docker image..."
-                docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
-                '''
+                container('docker') {
+                    sh '''
+                    docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
+                    '''
+                }
             }
         }
 
         stage('Docker Images') {
             steps {
-                sh '''
-                docker images
-                '''
-            }
-        }
-
-        stage('Pipeline Complete') {
-            steps {
-                echo 'DSA Visualizer CI/CD pipeline executed successfully!'
+                container('docker') {
+                    sh 'docker images'
+                }
             }
         }
     }
