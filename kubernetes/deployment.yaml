@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: dsa-visualizer
-        image: vardhanvarikuti/dsa-visualizer:latest
+        image: varikutivardhan/dsa-visualizer:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 6080
