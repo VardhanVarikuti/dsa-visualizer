@@ -29,7 +29,7 @@ spec:
 
     environment {
         DOCKER_HOST = 'tcp://127.0.0.1:2375'
-        DOCKER_IMAGE = 'varikutivardhan/dsa-visualizer'
+        DOCKER_IMAGE = 'vardhanvarikuti/dsa-visualizer'
         DOCKER_TAG = "${BUILD_NUMBER}"
     }
 
@@ -98,6 +98,11 @@ spec:
     }
 
     post {
+        always {
+            container('docker') {
+                sh 'docker logout'
+            }
+        }
         success {
             echo 'Pipeline SUCCESS'
         }
