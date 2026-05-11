@@ -16,7 +16,8 @@ spec:
     spec:
       containers:
       - name: dsa-visualizer
-        image: dsa-visualizer:latest # Replace with your DockerHub image
+        image: dsa-visualizer:latest
+        imagePullPolicy: Never
         ports:
         - containerPort: 6080
         resources:
