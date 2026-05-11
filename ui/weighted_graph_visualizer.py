@@ -1,9 +1,11 @@
+from .constants import *
+import ui.constants as _c
 import pygame
 import sys
 import string
 import math
+from utils.ui_helpers import set_window_icon, draw_wrapped_messages
 from core.graph.graph import Graph
-from .constants import *
 from core.graph.algorithms.dijkstra import dijkstra
 from core.graph.algorithms.bellman_ford import bellman_ford
 from core.graph.algorithms.floyd_warshall import floyd_warshall
@@ -62,8 +64,9 @@ class Button:
 class WeightedGraphVisualizer:
     def __init__(self):
         pygame.init()
-        self.win = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
+        self.win = pygame.display.set_mode((_c.WIDTH, _c.HEIGHT), pygame.RESIZABLE)
         pygame.display.set_caption("Weighted Graph Visualizer")
+        set_window_icon()
         self.font = pygame.font.SysFont(None, FONT_SIZE)
         self.nodes = []
         self.edges = []
@@ -94,41 +97,46 @@ class WeightedGraphVisualizer:
 
     def setup_buttons(self):
         w, h = 150, 36
-        gap = 30
-        # Arrange buttons in two rows
-        n_per_row = (len(ALGO_LIST) + 1) // 2
-        total_width = n_per_row * w + (n_per_row-1) * gap
-        x = (WIDTH - total_width) // 2
-        y1 = 16
-        y2 = y1 + h + 10
+        gap = 20
+        max_row_w = _c.WIDTH - 60
+        n_per_row = max(1, max_row_w // (w + gap))
+        
+        y_start = 16
         self.buttons = []
         for i, (algo, desc) in enumerate(ALGO_LIST):
             row = i // n_per_row
             col = i % n_per_row
-            btn_x = x + col * (w + gap)
-            btn_y = y1 if row == 0 else y2
+            row_count = min(n_per_row, len(ALGO_LIST) - row * n_per_row)
+            row_w = row_count * w + (row_count - 1) * gap
+            start_x = (_c.WIDTH - row_w) // 2
+            btn_x = start_x + col * (w + gap)
+            btn_y = y_start + row * (h + 10)
             btn = Button((btn_x, btn_y, w, h), algo, lambda a=algo: self.select_algo(a))
             self.buttons.append(btn)
-        # Mode buttons (top left)
+            
+        num_rows = (len(ALGO_LIST) + n_per_row - 1) // n_per_row
+        last_btn_y = y_start + (num_rows - 1) * (h + 10)
+        mb_y = last_btn_y + h + 20
         mb_w, mb_h = 140, 32
-        mb_x, mb_y = 30, y2 + h + 20
+        mb_x = 30
+        
         self.mode_buttons = [
             Button((mb_x, mb_y, mb_w, mb_h), "Edit Graph", lambda: self.set_mode(MODE_EDIT)),
         ]
         
-        # Add Set Start Node button only for algorithms that require it
-        start_node_algorithms = ["Dijkstra", "Bellman-Ford", "A*", "SPFA", "TopoSort+Relax"]
-        if self.active_algo in start_node_algorithms:
+        start_algos = ["Dijkstra", "Bellman-Ford", "A*", "SPFA", "TopoSort+Relax"]
+        if self.active_algo in start_algos:
             self.mode_buttons.append(Button((mb_x + mb_w + 16, mb_y, mb_w, mb_h), "Set Start Node", lambda: self.set_mode(MODE_SET_START)))
         
-        # Add Set Target Node button only for A*
         if self.active_algo == "A*":
-            self.mode_buttons.append(Button((mb_x, mb_y + 2*mb_h + 16, mb_w, mb_h), "Set Target Node", lambda: self.set_mode(MODE_SET_TARGET)))
+            self.mode_buttons.append(Button((mb_x, mb_y + mb_h + 10, mb_w, mb_h), "Set Target Node", lambda: self.set_mode(MODE_SET_TARGET)))
         
-        self.mode_buttons.append(Button((mb_x, mb_y + mb_h + 16, mb_w, mb_h), "Toggle Directed", self.toggle_directed))
+        mb_y_toggle = mb_y + mb_h + 10 if self.active_algo != "A*" else mb_y + 2*mb_h + 20
+        self.mode_buttons.append(Button((mb_x, mb_y_toggle, mb_w, mb_h), "Toggle Directed", self.toggle_directed))
+
         btn_w, btn_h = 150, 36
-        btn_x = WIDTH - btn_w - 30
-        btn_y1 = y2 + h + 20
+        btn_x = _c.WIDTH - btn_w - 30
+        btn_y1 = last_btn_y + h + 20
         btn_y2 = btn_y1 + btn_h + 12
         self.example_buttons = [
             Button((btn_x, btn_y1, btn_w, btn_h), "Load Example", self.load_example_graph)
@@ -212,13 +220,7 @@ class WeightedGraphVisualizer:
         mode_surf = self.font.render(f"Mode: {self.current_mode} | {'Directed' if self.directed else 'Undirected'}", True, (80, 80, 80))
         self.win.blit(mode_surf, (30, win_height-40))
         # Draw messages
-        self.show_message(self.message, INSTR_COLOR, y_abs=win_height-60)
-        if self.error_msg:
-            self.show_message(self.error_msg, ERROR_COLOR, y_abs=win_height-30)
-        if self.result_msg:
-            self.show_message(self.result_msg, (0, 120, 0), y_abs=win_height-90)
-        if self.animating:
-            self.show_message(f"Animation speed: {self.animation_delay} ms (+/-)", (80, 80, 80), y_abs=win_height-120)
+        self.draw_bottom_messages()
         if self.show_help:
             overlay = pygame.Surface((win_width, win_height), pygame.SRCALPHA)
             overlay.fill((240, 240, 255, 230))
@@ -273,6 +275,21 @@ class WeightedGraphVisualizer:
         left = (ex - length * math.cos(angle - math.pi/8), ey - length * math.sin(angle - math.pi/8))
         right = (ex - length * math.cos(angle + math.pi/8), ey - length * math.sin(angle + math.pi/8))
         pygame.draw.polygon(self.win, color, [(ex, ey), left, right])
+
+    
+    def draw_bottom_messages(self):
+        win_width, win_height = self.win.get_size()
+        messages = []
+        if hasattr(self, 'result_msg') and self.result_msg:
+            messages.append((self.result_msg, _c.SUCCESS_COLOR))
+        if hasattr(self, 'message') and self.message:
+            messages.append((self.message, _c.INSTR_COLOR))
+        if hasattr(self, 'error_msg') and self.error_msg:
+            messages.append((self.error_msg, _c.ERROR_COLOR))
+        if hasattr(self, 'animating') and self.animating:
+             messages.append((f"Animation speed: {self.animation_delay} ms (+/-)", (80, 80, 80)))
+
+        draw_wrapped_messages(self.win, self.font, messages, win_width - 100, win_height - 25)
 
     def show_message(self, msg, color, y_abs):
         win_width, _ = self.win.get_size()
@@ -418,7 +435,7 @@ class WeightedGraphVisualizer:
             pygame.display.update()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit(); sys.exit()
+                    return
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
                         try:
@@ -736,7 +753,7 @@ class WeightedGraphVisualizer:
                                 node = next((n for n in self.nodes if n.label == label), None)
                                 if node:
                                     node.selected = True
-                            msg = f"Path found: {' → '.join(path)}"
+                            msg = f"Path found: {' -> '.join(path)}"
                         elif step[0] == "not_found":
                             msg = "No path found."
                         elif step[0] == "update":
@@ -758,7 +775,7 @@ class WeightedGraphVisualizer:
                                     cur = prev.get(cur, None)
                                 path.reverse()
                                 if len(path) > 1 and dist[path[-1]] < float('inf'):
-                                    paths.append(f"{self.start_node.label}→{path[-1]}: {'->'.join(path)} (d={dist[path[-1]]})")
+                                    paths.append(f"{self.start_node.label}->{path[-1]}: {'->'.join(path)} (d={dist[path[-1]]})")
                             msg = "Dijkstra complete. " + (" | ".join(paths) if paths else "No reachable nodes.")
                     elif self.active_algo == "Bellman-Ford":
                         if step[0] == "update":
@@ -781,7 +798,7 @@ class WeightedGraphVisualizer:
                                     cur = prev.get(cur, None)
                                 path.reverse()
                                 if len(path) > 1 and dist[path[-1]] < float('inf'):
-                                    paths.append(f"{self.start_node.label}→{path[-1]}: {'->'.join(path)} (d={dist[path[-1]]})")
+                                    paths.append(f"{self.start_node.label}->{path[-1]}: {'->'.join(path)} (d={dist[path[-1]]})")
                             msg = "Bellman-Ford complete. " + (" | ".join(paths) if paths else "No reachable nodes.")
                     elif self.active_algo == "SPFA":
                         if step[0] == "visit":
@@ -811,7 +828,7 @@ class WeightedGraphVisualizer:
                                     cur = prev.get(cur, None)
                                 path.reverse()
                                 if len(path) > 1 and dist[path[-1]] < float('inf'):
-                                    paths.append(f"{self.start_node.label}→{path[-1]}: {'->'.join(path)} (d={dist[path[-1]]})")
+                                    paths.append(f"{self.start_node.label}->{path[-1]}: {'->'.join(path)} (d={dist[path[-1]]})")
                             msg = "SPFA complete. " + (" | ".join(paths) if paths else "No reachable nodes.")
                     elif self.active_algo == "A*":
                         if step[0] == "visit":
@@ -830,7 +847,7 @@ class WeightedGraphVisualizer:
                             prev = step[2]
                             path = step[3]
                             if len(path) > 1 and dist[path[-1]] < float('inf'):
-                                msg = f"A* path: {' → '.join(path)} (cost={dist[path[-1]]})"
+                                msg = f"A* path: {' -> '.join(path)} (cost={dist[path[-1]]})"
                             else:
                                 msg = "A*: No path found."
                     elif self.active_algo == "Prim":
@@ -858,7 +875,7 @@ class WeightedGraphVisualizer:
                     elif self.active_algo == "Floyd-Warshall":
                         if step[0] == "update":
                             i, j, new_dist = step[1], step[2], step[3]
-                            msg = f"Update: {i} → {j}, New Distance: {new_dist}"
+                            msg = f"Update: {i} -> {j}, New Distance: {new_dist}"
                         elif step[0] == "done":
                             dist = step[1]
                             vertices = step[3]
@@ -867,14 +884,14 @@ class WeightedGraphVisualizer:
                                 row = []
                                 for j, v in enumerate(vertices):
                                     d = dist[i][j]
-                                    row.append(f"{d if d < float('inf') else '∞'}")
+                                    row.append(f"{d if d < float('inf') else 'INF'}")
                                 matrix.append(f"{u}: " + ", ".join(row))
                             msg = "Floyd-Warshall complete.\n" + "\n".join(matrix)
                     elif self.active_algo == "Johnson":
                         if step[0] == "update":
                             if len(step) >= 4:
                                 u, v, d = step[1], step[2], step[3]
-                                msg = f"Johnson update: {u} → {v}, Distance: {d}"
+                                msg = f"Johnson update: {u} -> {v}, Distance: {d}"
                             elif len(step) == 2 and isinstance(step[1], str):
                                 msg = f"Johnson error: {step[1]}"
                             else:
@@ -894,7 +911,7 @@ class WeightedGraphVisualizer:
                                     row = []
                                     for v in vertices:
                                         d = dist[u][v]
-                                        row.append(f"{d if d < float('inf') else '∞'}")
+                                        row.append(f"{d if d < float('inf') else 'INF'}")
                                     lines.append(f"{u}: " + ", ".join(row))
                                 msg = "Johnson's algorithm complete.\n" + "\n".join(lines)
                     elif self.active_algo == "TopoSort+Relax":
@@ -923,7 +940,7 @@ class WeightedGraphVisualizer:
                                     cur = prev.get(cur, None)
                                 path.reverse()
                                 if len(path) > 1 and dist[path[-1]] < float('inf'):
-                                    paths.append(f"{self.start_node.label}→{path[-1]}: {'->'.join(path)} (d={dist[path[-1]]})")
+                                    paths.append(f"{self.start_node.label}->{path[-1]}: {'->'.join(path)} (d={dist[path[-1]]})")
                             msg = "TopoSort+Relax complete. " + (" | ".join(paths) if paths else "No reachable nodes.")
                 self.last_msg = msg # Store the last message
                 self.result_msg = msg
@@ -970,8 +987,9 @@ class WeightedGraphVisualizer:
                     self.animate()
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
-                        pygame.quit(); sys.exit()
+                        return
                     elif event.type == pygame.VIDEORESIZE:
+                        _c.WIDTH, _c.HEIGHT = event.w, event.h
                         self.win = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
                         self.setup_buttons()
                     elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -1033,7 +1051,7 @@ class WeightedGraphVisualizer:
                     elif event.type == pygame.KEYDOWN:
                         self.error_msg = ''
                         if event.key == pygame.K_q:
-                            pygame.quit(); sys.exit()
+                            return
                         elif event.key == pygame.K_r:
                             self.reset()
                         elif event.key == pygame.K_DELETE or event.key == pygame.K_BACKSPACE:
@@ -1056,11 +1074,11 @@ class WeightedGraphVisualizer:
         except KeyboardInterrupt:
             print("\nExiting gracefully...")
             pygame.quit()
-            sys.exit(0)
+            return
         except Exception as e:
             print(f"An error occurred: {e}")
             pygame.quit()
-            sys.exit(1)
+            return
 
 def run_weighted_graph_visualizer():
     WeightedGraphVisualizer().run()

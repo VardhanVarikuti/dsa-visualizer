@@ -193,4 +193,17 @@ $RECYCLE.BIN/
 
 # Temporary files
 *.tmp
-*.temp 
+*.temp
+
+# Terraform
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.backup
+terraform/*.tfvars
+terraform/.terraform.lock.hcl
+
+# PyInstaller build artifacts
+*.spec
+
+# Docker
+docker-compose.override.yml

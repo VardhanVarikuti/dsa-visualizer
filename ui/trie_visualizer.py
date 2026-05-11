@@ -1,10 +1,13 @@
+import ui.constants as _c
+from .constants import *
 """
 Pygame Trie Visualizer (Improved UI & Robustness, Consistent Layout)
 """
 import pygame
-from core.tree.trie import TrieNode, trie_insert, trie_search, trie_prefix_match
+from core.tree.trie import TrieNode, trie_insert, trie_search, trie_prefix_match, trie_delete
+from utils.ui_helpers import set_window_icon, draw_wrapped_messages
 
-WIDTH, HEIGHT = 1200, 800
+WIDTH, HEIGHT = 1024, 680
 NODE_RADIUS = 25
 VERTICAL_GAP = 80
 FONT_SIZE = 20
@@ -49,17 +52,16 @@ def animate_trie_search(win, root, word, font, search_type='search', result_msg=
         node = node.children[char]
     return node.is_end if search_type == 'search' else True
 
-def show_message(win, font, msg, color=BLACK, y_offset=0, y_abs=None):
-    text = font.render(msg, True, color)
-    if y_abs is not None:
-        win.blit(text, (10, y_abs))
-    else:
-        win.blit(text, (10, HEIGHT-40+y_offset))
+def show_message(win, font, msg, color=BLACK, y_abs=None):
+    # Handled by draw_wrapped_messages now
+    pass
 
 def run_trie_visualizer():
+    global WIDTH, HEIGHT
     pygame.init()
-    win = pygame.display.set_mode((WIDTH, HEIGHT))
+    win = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
     pygame.display.set_caption("Trie Visualizer")
+    set_window_icon()
     font = pygame.font.SysFont(None, FONT_SIZE)
     root = TrieNode()
     input_value = ''
@@ -73,9 +75,10 @@ def run_trie_visualizer():
         if result_msg:
             show_message(win, font, result_msg, GREEN, y_abs=10)
         draw_trie(win, root, WIDTH//2, RESULT_DISPLAY_HEIGHT + 20, WIDTH//2, font)
-        show_message(win, font, message, BLACK, 0)
-        if error_msg:
-            show_message(win, font, error_msg, ERROR_COLOR, -30)
+        msgs = []
+        if message: msgs.append((message, BLACK))
+        if error_msg: msgs.append((error_msg, ERROR_COLOR))
+        draw_wrapped_messages(win, font, msgs, WIDTH - 40, HEIGHT - 20)
         inp = font.render(f'Word: {input_value}', True, RED)
         win.blit(inp, (10, HEIGHT-70))
         
@@ -91,20 +94,20 @@ def run_trie_visualizer():
                 "TRIE VISUALIZER - HELP",
                 "",
                 "CONTROLS:",
-                "• Type letters/numbers to input words",
-                "• I: Insert the input word",
-                "• S: Search for the input word",
-                "• P: Find all words with the input prefix",
-                "• D: Delete the input word",
-                "• R: Reset the trie",
-                "• Q: Quit the visualizer",
-                "• H: Toggle this help overlay",
+                "* Type letters/numbers to input words",
+                "* I: Insert the input word",
+                "* S: Search for the input word",
+                "* P: Find all words with the input prefix",
+                "* D: Delete the input word",
+                "* R: Reset the trie",
+                "* Q: Quit the visualizer",
+                "* H: Toggle this help overlay",
                 "",
                 "FEATURES:",
-                "• Animated search visualization",
-                "• Prefix matching with results",
-                "• Real-time trie updates",
-                "• Error handling and validation"
+                "* Animated search visualization",
+                "* Prefix matching with results",
+                "* Real-time trie updates",
+                "* Error handling and validation"
             ]
             
             for i, line in enumerate(help_lines):
@@ -116,6 +119,9 @@ def run_trie_visualizer():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            elif event.type == pygame.VIDEORESIZE:
+                WIDTH, HEIGHT = event.w, event.h
+                win = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
             elif event.type == pygame.KEYDOWN:
                 error_msg = ''
                 try:

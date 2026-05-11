@@ -1,0 +1,55 @@
+name: DSA Visualizer CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libsdl2-2.0-0 libsdl2-image-2.0-0 libsdl2-mixer-2.0-0 libsdl2-ttf-2.0-0
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pygame>=2.0.0
+
+    - name: Verify Pygame import
+      run: |
+        python -c "import pygame; print(f'Pygame {pygame.version.ver} OK')"
+
+    - name: Verify core modules
+      run: |
+        python -c "from core.graph.graph import Graph; print('Graph module OK')"
+        python -c "from core.tree.bst import bst_insert; print('BST module OK')"
+        python -c "from core.tree.avl import avl_insert; print('AVL module OK')"
+        python -c "from core.tree.trie import trie_insert; print('Trie module OK')"
+
+  docker-build:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Build Docker image
+      run: docker build -t dsa-visualizer:test .
+
+    - name: Verify container starts
+      run: |
+        docker run -d --name test-container -p 6080:6080 dsa-visualizer:test
+        sleep 10
+        docker logs test-container
+        docker stop test-container

@@ -1,16 +1,15 @@
 #!/bin/bash
-# Build macOS executable using PyInstaller
+# Build Linux executable using PyInstaller
 set -e
 
-echo "=== Building DSA Visualizer for macOS ==="
+echo "=== Building DSA Visualizer for Linux ==="
 
 # Install PyInstaller if needed
 pip install pyinstaller
 
 # Build the executable
 pyinstaller --onefile \
-    --name "DSA Visualizer" \
-    --windowed \
+    --name "dsa-visualizer" \
     --add-data "core:core" \
     --add-data "menus:menus" \
     --add-data "ui:ui" \
@@ -19,5 +18,5 @@ pyinstaller --onefile \
     main.py
 
 echo ""
-echo "Build complete! Executable is at: dist/DSA Visualizer"
-echo "Run it with: ./dist/DSA\ Visualizer"
+echo "Build complete! Executable is at: dist/dsa-visualizer"
+echo "Run it with: ./dist/dsa-visualizer"

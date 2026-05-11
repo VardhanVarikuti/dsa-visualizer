@@ -1,7 +1,10 @@
+from .constants import *
+import ui.constants as _c
 import pygame
 import sys
 import string
 import math
+from utils.ui_helpers import set_window_icon, draw_wrapped_messages
 from core.graph.graph import Graph
 # Import algorithms (to be implemented if not present)
 from core.graph.algorithms.bfs import bfs
@@ -10,7 +13,6 @@ from core.graph.algorithms.connected_components import connected_components
 from core.graph.algorithms.cycle_detection_undirected import has_cycle_undirected
 from core.graph.algorithms.articulation_points import articulation_points_and_bridges
 from core.graph.algorithms.bipartite import is_bipartite
-from .constants import *
 
 ALGO_LIST = [
     ("BFS", "Breadth-First Search"),
@@ -71,8 +73,9 @@ class UndirectedGraphVisualizer:
     """Main class for the undirected graph visualizer UI and logic."""
     def __init__(self):
         pygame.init()
-        self.win = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
+        self.win = pygame.display.set_mode((_c.WIDTH, _c.HEIGHT), pygame.RESIZABLE)
         pygame.display.set_caption("Undirected Graph Visualizer")
+        set_window_icon()
         self.font = pygame.font.SysFont(None, FONT_SIZE)
         self.nodes = []
         self.edges = []
@@ -100,32 +103,41 @@ class UndirectedGraphVisualizer:
         self.setup_buttons()
 
     def setup_buttons(self):
-        """Set up all UI buttons for algorithms, modes, and actions."""
-        # Place algorithm buttons at the top, more spacious and centered
         w, h = 150, 36
-        gap = 30
-        total_width = len(ALGO_LIST) * w + (len(ALGO_LIST)-1) * gap
-        x = (WIDTH - total_width) // 2
-        y = 16
+        gap = 20
+        max_row_w = _c.WIDTH - 60
+        n_per_row = max(1, max_row_w // (w + gap))
+        
+        y_start = 16
         self.buttons = []
         for i, (algo, desc) in enumerate(ALGO_LIST):
-            btn = Button((x + i*(w+gap), y, w, h), algo, lambda a=algo: self.select_algo(a))
+            row = i // n_per_row
+            col = i % n_per_row
+            row_count = min(n_per_row, len(ALGO_LIST) - row * n_per_row)
+            row_w = row_count * w + (row_count - 1) * gap
+            start_x = (_c.WIDTH - row_w) // 2
+            btn_x = start_x + col * (w + gap)
+            btn_y = y_start + row * (h + 10)
+            btn = Button((btn_x, btn_y, w, h), algo, lambda a=algo: self.select_algo(a))
             self.buttons.append(btn)
-        # Mode buttons (top left)
+            
+        num_rows = (len(ALGO_LIST) + n_per_row - 1) // n_per_row
+        last_btn_y = y_start + (num_rows - 1) * (h + 10)
+        mb_y = last_btn_y + h + 20
         mb_w, mb_h = 140, 32
-        mb_x, mb_y = 30, y + h + 30
+        mb_x = 30
+        
         self.mode_buttons = [
             Button((mb_x, mb_y, mb_w, mb_h), "Edit Graph", lambda: self.set_mode(MODE_EDIT)),
         ]
         
-        # Add Set Start Node button only for algorithms that require it
-        start_node_algorithms = ["BFS", "DFS"]
-        if self.active_algo in start_node_algorithms:
+        start_algos = ["BFS", "DFS"]
+        if self.active_algo in start_algos:
             self.mode_buttons.append(Button((mb_x + mb_w + 16, mb_y, mb_w, mb_h), "Set Start Node", lambda: self.set_mode(MODE_SET_START)))
-        # Example and Run buttons: vertical stack at top right, below algo buttons
+        
         btn_w, btn_h = 150, 36
-        btn_x = WIDTH - btn_w - 30
-        btn_y1 = y + h + 30  # 30px below algo buttons
+        btn_x = _c.WIDTH - btn_w - 30
+        btn_y1 = last_btn_y + h + 20
         btn_y2 = btn_y1 + btn_h + 12
         self.example_buttons = [
             Button((btn_x, btn_y1, btn_w, btn_h), "Load Example", self.load_example_graph)
@@ -455,15 +467,7 @@ class UndirectedGraphVisualizer:
         mode_surf = self.font.render(f"Mode: {self.current_mode}", True, (80, 80, 80))
         self.win.blit(mode_surf, (30, win_height-40))
         # Draw messages
-        self.show_message(self.message, INSTR_COLOR, y_abs=win_height-60)
-        if self.error_msg:
-            self.show_message(self.error_msg, ERROR_COLOR, y_abs=win_height-30)
-        if self.result_msg:
-            self.show_message(self.result_msg, (0, 120, 0), y_abs=win_height-90)
-        # Show animation speed if animating
-        if self.animating:
-            self.show_message(f"Animation speed: {self.animation_delay} ms (+/-)", (80, 80, 80), y_abs=win_height-120)
-        # Draw help overlay if needed
+        self.draw_bottom_messages()
         if self.show_help:
             overlay = pygame.Surface((win_width, win_height), pygame.SRCALPHA)
             overlay.fill((240, 240, 255, 230))
@@ -498,6 +502,21 @@ class UndirectedGraphVisualizer:
             pygame.display.update()
             return
         pygame.display.update()
+
+    
+    def draw_bottom_messages(self):
+        win_width, win_height = self.win.get_size()
+        messages = []
+        if hasattr(self, 'result_msg') and self.result_msg:
+            messages.append((self.result_msg, _c.SUCCESS_COLOR))
+        if hasattr(self, 'message') and self.message:
+            messages.append((self.message, _c.INSTR_COLOR))
+        if hasattr(self, 'error_msg') and self.error_msg:
+            messages.append((self.error_msg, _c.ERROR_COLOR))
+        if hasattr(self, 'animating') and self.animating:
+             messages.append((f"Animation speed: {self.animation_delay} ms (+/-)", (80, 80, 80)))
+
+        draw_wrapped_messages(self.win, self.font, messages, win_width - 100, win_height - 25)
 
     def show_message(self, msg, color, y_abs):
         win_width, _ = self.win.get_size()
@@ -600,18 +619,18 @@ class UndirectedGraphVisualizer:
                     for node in self.nodes:
                         if node.label in path:
                             node.selected = True
-                    msg = f"DFS path: {' → '.join(path)}"
+                    msg = f"DFS path: {' -> '.join(path)}"
                 elif step[0] == "cycle":
                     cycle_path = step[1]
                     for node in self.nodes:
                         if node.label in cycle_path:
                             node.selected = True
-                    msg = f"Cycle found: {' → '.join(cycle_path)}"
+                    msg = f"Cycle found: {' -> '.join(cycle_path)}"
                 elif step[0] == "done":
                     has_cycle = step[1]
                     cycle_path = step[2]
                     if has_cycle:
-                        msg = f"Cycle Detected! Path: {' → '.join(cycle_path)}"
+                        msg = f"Cycle Detected! Path: {' -> '.join(cycle_path)}"
                     else:
                         msg = "No Cycles."
             elif self.active_algo in ("Articulation Points", "Bridges"):
@@ -699,9 +718,10 @@ class UndirectedGraphVisualizer:
                 self.animate()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit(); sys.exit()
+                    return
                 elif event.type == pygame.VIDEORESIZE:
                     # Update window size
+                    _c.WIDTH, _c.HEIGHT = event.w, event.h
                     self.win = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
                     # Optionally, reposition nodes/buttons here for dynamic layout
                 elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -742,7 +762,7 @@ class UndirectedGraphVisualizer:
                 elif event.type == pygame.KEYDOWN:
                     self.error_msg = ''
                     if event.key == pygame.K_q:
-                        pygame.quit(); sys.exit()
+                        return
                     elif event.key == pygame.K_r:
                         self.reset()
                     elif event.key == pygame.K_DELETE or event.key == pygame.K_BACKSPACE:

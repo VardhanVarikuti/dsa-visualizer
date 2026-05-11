@@ -5,7 +5,7 @@ from core.graph.graph import Graph
 from core.graph.algorithms.topo_sort import topo_sort
 from core.graph.algorithms.bellman_ford import bellman_ford
 
-WIDTH, HEIGHT = 1200, 800
+WIDTH, HEIGHT = 1024, 680
 NODE_RADIUS = 32
 NODE_COLOR = (100, 149, 237)
 NODE_SELECTED_COLOR = (255, 140, 0)
@@ -33,7 +33,7 @@ class VisualEdge:
 class GraphVisualizer:
     def __init__(self):
         pygame.init()
-        self.win = pygame.display.set_mode((WIDTH, HEIGHT))
+        self.win = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
         pygame.display.set_caption("Directed Graph Visualizer")
         self.font = pygame.font.SysFont(None, FONT_SIZE)
         self.nodes = []
@@ -158,25 +158,25 @@ class GraphVisualizer:
                 "DIRECTED GRAPH VISUALIZER - HELP",
                 "",
                 "CONTROLS:",
-                "• Left-click: Add node or select node",
-                "• Drag from node: Create edge",
-                "• Right-click: Select edge",
-                "• Delete/Backspace: Delete selected",
-                "• T: Run Topological Sort",
-                "• B: Run Bellman-Ford (requires source)",
-                "• R: Reset the graph",
-                "• Q: Quit the visualizer",
-                "• H: Toggle this help overlay",
+                "* Left-click: Add node or select node",
+                "* Drag from node: Create edge",
+                "* Right-click: Select edge",
+                "* Delete/Backspace: Delete selected",
+                "* T: Run Topological Sort",
+                "* B: Run Bellman-Ford (requires source)",
+                "* R: Reset the graph",
+                "* Q: Quit the visualizer",
+                "* H: Toggle this help overlay",
                 "",
                 "FEATURES:",
-                "• Interactive directed graph building",
-                "• Topological sorting with cycle detection",
-                "• Bellman-Ford shortest path algorithm",
-                "• Animated algorithm visualization",
+                "* Interactive directed graph building",
+                "* Topological sorting with cycle detection",
+                "* Bellman-Ford shortest path algorithm",
+                "* Animated algorithm visualization",
                 "",
                 "ALGORITHMS:",
-                "• Topological Sort: Orders nodes in DAG",
-                "• Bellman-Ford: Finds shortest paths"
+                "* Topological Sort: Orders nodes in DAG",
+                "* Bellman-Ford: Finds shortest paths"
             ]
             
             for i, line in enumerate(help_lines):
@@ -220,7 +220,7 @@ class GraphVisualizer:
         while self.animating and self.animation_index < len(self.animation_steps):
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit(); sys.exit()
+                    return
             # Highlight current node
             for node in self.nodes:
                 node.selected = (node.label == self.animation_steps[self.animation_index])
@@ -242,7 +242,7 @@ class GraphVisualizer:
         while self.animating and self.animation_index < len(self.animation_steps):
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit(); sys.exit()
+                    return
             # Highlight current node
             for node in self.nodes:
                 node.selected = (node.label == self.animation_steps[self.animation_index][0])
@@ -254,15 +254,19 @@ class GraphVisualizer:
         self.animating = False
         self.draw()
         if not negative_cycle:
-            msg = "Shortest distances: " + ", ".join(f"{k}:{v if v!=float('inf') else '∞'}" for k,v in dist.items())
+            msg = "Shortest distances: " + ", ".join(f"{k}:{v if v!=float('inf') else 'INF'}" for k,v in dist.items())
             self.error_msg = msg
 
     def run(self):
+        global WIDTH, HEIGHT
         while True:
             self.draw()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit(); sys.exit()
+                    return
+                elif event.type == pygame.VIDEORESIZE:
+                    WIDTH, HEIGHT = event.w, event.h
+                    self.win = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:  # Left click
                         node = self.get_node_at_pos(event.pos)
@@ -291,7 +295,7 @@ class GraphVisualizer:
                 elif event.type == pygame.KEYDOWN:
                     self.error_msg = ''
                     if event.key == pygame.K_q:
-                        pygame.quit(); sys.exit()
+                        return
                     elif event.key == pygame.K_h:
                         self.show_help = not self.show_help
                     elif event.key == pygame.K_r:

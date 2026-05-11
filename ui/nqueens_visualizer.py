@@ -1,7 +1,9 @@
+import ui.constants as _c
+from .constants import *
 import pygame
 import sys
 
-WIDTH, HEIGHT = 1200, 800
+WIDTH, HEIGHT = 1024, 680
 BOARD_TOP = 60
 BOARD_MARGIN = 40
 WHITE = (255,255,255)
@@ -75,9 +77,12 @@ def show_message(win, font, msg, color=BLACK, y_offset=0, y_abs=None):
 
 # --- Main Visualizer ---
 def run_nqueens_visualizer():
+    global WIDTH, HEIGHT
     pygame.init()
-    win = pygame.display.set_mode((WIDTH, HEIGHT))
+    win = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
     pygame.display.set_caption("N-Queens Visualizer")
+    from utils.ui_helpers import set_window_icon
+    set_window_icon()
     font = pygame.font.SysFont(None, FONT_SIZE)
     N = None
     input_value = ''
@@ -114,23 +119,23 @@ def run_nqueens_visualizer():
                 "N-QUEENS VISUALIZER - HELP",
                 "",
                 "CONTROLS:",
-                "• N: Set board size (4-16)",
-                "• S: Step through backtracking",
-                "• A: Auto-solve with animation",
-                "• R: Reset current board",
-                "• Q: Quit the visualizer",
-                "• H: Toggle this help overlay",
+                "* N: Set board size (4-16)",
+                "* S: Step through backtracking",
+                "* A: Auto-solve with animation",
+                "* R: Reset current board",
+                "* Q: Quit the visualizer",
+                "* H: Toggle this help overlay",
                 "",
                 "FEATURES:",
-                "• Interactive N-Queens backtracking",
-                "• Step-by-step solution visualization",
-                "• Auto-solve with animation",
-                "• Multiple solution exploration",
+                "* Interactive N-Queens backtracking",
+                "* Step-by-step solution visualization",
+                "* Auto-solve with animation",
+                "* Multiple solution exploration",
                 "",
                 "ALGORITHM:",
-                "• Uses backtracking to find valid solutions",
-                "• Queens cannot attack each other",
-                "• Shows placement and removal steps"
+                "* Uses backtracking to find valid solutions",
+                "* Queens cannot attack each other",
+                "* Shows placement and removal steps"
             ]
             
             for i, line in enumerate(help_lines):
@@ -167,6 +172,9 @@ def run_nqueens_visualizer():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            elif event.type == pygame.VIDEORESIZE:
+                WIDTH, HEIGHT = event.w, event.h
+                win = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
             elif event.type == pygame.KEYDOWN:
                 error_msg = ''
                 if prompt_n:

@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dsa-visualizer
+  labels:
+    app: dsa-visualizer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dsa-visualizer
+  template:
+    metadata:
+      labels:
+        app: dsa-visualizer
+    spec:
+      containers:
+      - name: dsa-visualizer
+        image: dsa-visualizer:latest # Replace with your DockerHub image
+        ports:
+        - containerPort: 6080
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+          requests:
+            cpu: "200m"
+            memory: "256Mi"

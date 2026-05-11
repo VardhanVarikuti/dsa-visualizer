@@ -1,10 +1,13 @@
+import ui.constants as _c
+from .constants import *
 """
 Pygame Generic Binary Tree Visualizer (Dynamic Layout, No Out-of-Bounds)
 """
 import pygame
 from core.tree.operations import TreeNode, tree_insert, tree_delete, tree_lca
+from utils.ui_helpers import set_window_icon, draw_wrapped_messages
 
-WIDTH, HEIGHT = 1200, 800
+WIDTH, HEIGHT = 1024, 680
 NODE_RADIUS = 25
 VERTICAL_GAP = 80
 FONT_SIZE = 22
@@ -108,18 +111,17 @@ def animate_lca(win, root, v1, v2, lca_value, font):
         pygame.display.update()
         pygame.time.delay(800)
 
-def show_message(win, font, msg, color=BLACK, y_offset=0, y_abs=None):
-    text = font.render(msg, True, color)
-    if y_abs is not None:
-        win.blit(text, (10, y_abs))
-    else:
-        win.blit(text, (10, HEIGHT-40+y_offset))
+def show_message(win, font, msg, color=BLACK, y_abs=None):
+    # This is handled by draw_wrapped_messages in the main loop now
+    pass
 
 # --- Main Visualizer (unchanged except draw_generic_tree call) ---
 def run_generic_tree_visualizer():
+    global WIDTH, HEIGHT
     pygame.init()
-    win = pygame.display.set_mode((WIDTH, HEIGHT))
+    win = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
     pygame.display.set_caption("Generic Binary Tree Visualizer")
+    set_window_icon()
     font = pygame.font.SysFont(None, FONT_SIZE)
     root = None
     input_value = ''
@@ -142,9 +144,10 @@ def run_generic_tree_visualizer():
         if lca_result:
             show_message(win, font, lca_result, GREEN, y_abs=10)
         draw_generic_tree(win, root, font)
-        show_message(win, font, message, BLACK, 0)
-        if error_msg:
-            show_message(win, font, error_msg, ERROR_COLOR, -30)
+        msgs = []
+        if message: msgs.append((message, BLACK))
+        if error_msg: msgs.append((error_msg, ERROR_COLOR))
+        draw_wrapped_messages(win, font, msgs, WIDTH - 40, HEIGHT - 20)
         if lca_mode:
             prompt = 'LCA: '
             if lca_value1:
@@ -182,28 +185,28 @@ def run_generic_tree_visualizer():
                 "GENERIC BINARY TREE VISUALIZER - HELP",
                 "",
                 "CONTROLS:",
-                "• Type numbers to input values",
-                "• I: Enter insert mode",
-                "• D: Delete the input value",
-                "• L: Enter LCA (Lowest Common Ancestor) mode",
-                "• R: Reset the tree",
-                "• Q: Quit the visualizer",
-                "• H: Toggle this help overlay",
+                "* Type numbers to input values",
+                "* I: Enter insert mode",
+                "* D: Delete the input value",
+                "* L: Enter LCA (Lowest Common Ancestor) mode",
+                "* R: Reset the tree",
+                "* Q: Quit the visualizer",
+                "* H: Toggle this help overlay",
                 "",
                 "INSERT MODE:",
-                "• TAB: Switch between value, parent, side",
-                "• ENTER: Complete insertion",
-                "• L/R: Set left or right side",
+                "* TAB: Switch between value, parent, side",
+                "* ENTER: Complete insertion",
+                "* L/R: Set left or right side",
                 "",
                 "LCA MODE:",
-                "• Type two values separated by comma/space",
-                "• ENTER: Calculate LCA",
+                "* Type two values separated by comma/space",
+                "* ENTER: Calculate LCA",
                 "",
                 "FEATURES:",
-                "• Generic binary tree operations",
-                "• Animated LCA path visualization",
-                "• Flexible parent-child relationships",
-                "• Dynamic layout adaptation"
+                "* Generic binary tree operations",
+                "* Animated LCA path visualization",
+                "* Flexible parent-child relationships",
+                "* Dynamic layout adaptation"
             ]
             
             for i, line in enumerate(help_lines):
@@ -215,6 +218,9 @@ def run_generic_tree_visualizer():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            elif event.type == pygame.VIDEORESIZE:
+                WIDTH, HEIGHT = event.w, event.h
+                win = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
             elif event.type == pygame.KEYDOWN:
                 error_msg = ''
                 try:

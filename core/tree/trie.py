@@ -40,3 +40,30 @@ def trie_prefix_match(root, prefix):
             dfs(child, path + c)
     dfs(node, "")
     return results
+
+def trie_delete(root, word):
+    """
+    Deletes a word from the trie.
+    Returns True if the word was found and deleted.
+    """
+    def _delete(node, word, depth):
+        if depth == len(word):
+            if not node.is_end:
+                return False
+            node.is_end = False
+            return len(node.children) == 0
+        
+        char = word[depth]
+        if char not in node.children:
+            return False
+        
+        should_delete_child = _delete(node.children[char], word, depth + 1)
+        
+        if should_delete_child:
+            del node.children[char]
+            return not node.is_end and len(node.children) == 0
+        
+        return False
+
+    _delete(root, word, 0)
+    return root

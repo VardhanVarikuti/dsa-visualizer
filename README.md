@@ -1,27 +1,27 @@
 # DSA Visualizer 🚀
 
-A comprehensive Python framework for visualizing Data Structures and Algorithms through interactive CLI menus and beautiful Pygame GUIs.
+A comprehensive Python framework for visualizing Data Structures and Algorithms through interactive CLI menus and beautiful Pygame GUIs. Deployed to the web using X11 + noVNC with a full DevOps pipeline.
 
 ## ✨ What's Included
 
-### **Tree Algorithms**
+### **Tree Algorithms** 🌳
 - **Binary Trees**: BST, AVL, Generic Binary Tree
 - **Specialized Trees**: Trie, N-ary Tree
 - **Operations**: Insert, Delete, Traversals, LCA, Search
 
-### **Graph Algorithms** (20+ algorithms)
-- **Pathfinding**: BFS, DFS, A*, Dijkstra, Bidirectional BFS
-- **Shortest Path**: Dijkstra, Bellman-Ford, Floyd-Warshall, Johnson, SPFA
-- **Minimum Spanning Tree**: Prim's, Kruskal's
-- **Graph Analysis**: Topological Sort, SCC, Cycle Detection, Connected Components
-- **Specialized**: Articulation Points, Bridges, Bipartite Check
+### **Graph Algorithms** 📊
+- **Undirected Graph**: BFS, DFS, Connected Components, Bipartite Check
+- **Directed Graph**: Topological Sort, Bellman-Ford, Cycle Detection
+- **Weighted Graph**: Dijkstra, Prim, Kruskal, Floyd-Warshall
+
+### **Miscellaneous** 🧩
+- **Maze/Grid Pathfinding**: BFS, DFS, A*, Dijkstra, Bidirectional BFS
+- **N-Queens**: Backtracking visualization
 
 ### **Interactive Features**
-- **Real-time animations** with step-by-step visualization
-- **Dynamic layouts** that adapt to content
-- **Contextual UI** with relevant buttons only
-- **Error handling** with clear feedback
-- **Example graphs** for quick learning
+- Real-time animations with step-by-step visualization
+- Dynamic layouts that adapt to content
+- Error handling with clear feedback
 
 ## 🚀 Quick Start
 
@@ -33,24 +33,42 @@ pip install -r requirements.txt
 python main.py
 ```
 
+## 🏗️ Build Standalone Executables
+
+```bash
+# macOS
+bash build_scripts/build_macos.sh
+
+# Linux
+bash build_scripts/build_linux.sh
+
+# Windows
+build_scripts\build_windows.bat
+```
+
+## ☁️ DevOps Deployment (X11 + noVNC)
+
+See [README_DEVOPS.md](README_DEVOPS.md) for the full pipeline:
+- **Docker**: Containerized Pygame app with virtual display
+- **Kubernetes**: Orchestrated deployment
+- **Jenkins**: CI/CD pipeline
+- **Terraform**: AWS infrastructure
+- **Prometheus + Grafana**: Monitoring stack
+
+```bash
+# Quick local test
+docker build -t dsa-visualizer .
+docker run -p 6080:6080 dsa-visualizer
+# Open http://localhost:6080/vnc.html
+```
+
 ## 📚 Documentation
 
-- **[USER_GUIDE.md](USER_GUIDE.md)**: Complete user guide with step-by-step instructions
-- **[ALGORITHM_COMPLEXITY.md](ALGORITHM_COMPLEXITY.md)**: Detailed complexity analysis for all algorithms
-- **[DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md)**: Developer documentation for contributors
-
-## 📈 Project Status
-
-✅ **Production Ready** - All core features implemented and tested
-✅ **Comprehensive Documentation** - Complete guides for users and developers
-✅ **Error-Free Operation** - Robust error handling and graceful recovery
-✅ **Educational Focus** - Step-by-step animations for learning
-
-## 🤝 Contributing
-
-We welcome contributions! Please see [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md) for development setup, code standards, and contribution workflow.
+- **[USER_GUIDE.md](USER_GUIDE.md)**: Complete user guide
+- **[ALGORITHM_COMPLEXITY.md](ALGORITHM_COMPLEXITY.md)**: Complexity analysis
+- **[DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md)**: Developer documentation
+- **[README_DEVOPS.md](README_DEVOPS.md)**: DevOps pipeline guide
 
 ## 📄 License
 
-MIT License - See LICENSE file for details 
-- **[Licens](LICENSE)**
+MIT License - See [LICENSE](LICENSE)

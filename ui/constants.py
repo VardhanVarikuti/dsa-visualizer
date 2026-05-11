@@ -1,9 +1,10 @@
 # UI and color constants for all visualizers
 
-WIDTH, HEIGHT = 1200, 800
+WIDTH, HEIGHT = 1024, 680
 NODE_RADIUS = 20
 FONT_SIZE = 28
 BUTTON_FONT_SIZE = 20
+ICON_PATH = "assets/icon.png"
 
 # Colorblind-friendly palette (ColorBrewer Set2)
 COMPONENT_COLORS = [
@@ -31,3 +32,9 @@ ERROR_COLOR = (200, 40, 40)
 BUTTON_COLOR = (220, 220, 220)
 BUTTON_ACTIVE = (180, 210, 255)
 BUTTON_TEXT = (30, 30, 30) 
+# Premium Aesthetics
+DARK_MODE_BG = (18, 18, 18)
+DARK_MODE_TEXT = (230, 230, 230)
+ACCENT_COLOR = (123, 104, 238) # Medium Slate Blue
+SUCCESS_COLOR = (46, 204, 113) # Emerald Green
+WARNING_COLOR = (241, 196, 15) # Sun Flower Yellow

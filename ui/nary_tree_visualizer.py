@@ -1,10 +1,12 @@
+import ui.constants as _c
+from .constants import *
 """
 Pygame N-ary Tree Visualizer (Improved UI & Robustness, Dynamic Layout)
 """
 import pygame
 from core.tree.nary_tree import NaryTreeNode, nary_bfs, nary_dfs
 
-WIDTH, HEIGHT = 1200, 800
+WIDTH, HEIGHT = 1024, 680
 NODE_RADIUS = 25
 VERTICAL_GAP = 80
 FONT_SIZE = 20
@@ -112,8 +114,9 @@ def delete_nary_node(root, value):
     return root, False
 
 def run_nary_tree_visualizer():
+    global WIDTH, HEIGHT
     pygame.init()
-    win = pygame.display.set_mode((WIDTH, HEIGHT))
+    win = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
     pygame.display.set_caption("N-ary Tree Visualizer")
     font = pygame.font.SysFont(None, FONT_SIZE)
     root = None
@@ -147,20 +150,20 @@ def run_nary_tree_visualizer():
                 "N-ARY TREE VISUALIZER - HELP",
                 "",
                 "CONTROLS:",
-                "• Type numbers to input values",
-                "• I: Insert the input value",
-                "• T: Show BFS and DFS traversals",
-                "• D: Delete the input value",
-                "• R: Reset the tree",
-                "• Q: Quit the visualizer",
-                "• H: Toggle this help overlay",
-                "• TAB: Switch between value and parent input",
+                "* Type numbers to input values",
+                "* I: Insert the input value",
+                "* T: Show BFS and DFS traversals",
+                "* D: Delete the input value",
+                "* R: Reset the tree",
+                "* Q: Quit the visualizer",
+                "* H: Toggle this help overlay",
+                "* TAB: Switch between value and parent input",
                 "",
                 "FEATURES:",
-                "• N-ary tree with unlimited children",
-                "• Animated BFS and DFS traversal",
-                "• Parent-child relationship building",
-                "• Dynamic layout adaptation"
+                "* N-ary tree with unlimited children",
+                "* Animated BFS and DFS traversal",
+                "* Parent-child relationship building",
+                "* Dynamic layout adaptation"
             ]
             
             for i, line in enumerate(help_lines):
@@ -172,6 +175,9 @@ def run_nary_tree_visualizer():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            elif event.type == pygame.VIDEORESIZE:
+                WIDTH, HEIGHT = event.w, event.h
+                win = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
             elif event.type == pygame.KEYDOWN:
                 error_msg = ''
                 try:

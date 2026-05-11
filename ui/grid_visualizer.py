@@ -8,11 +8,12 @@ from core.grid.maze_algorithms.dfs import dfs
 from core.grid.maze_algorithms.astar import astar
 from core.grid.maze_algorithms.dijkstra import dijkstra
 from core.grid.maze_algorithms.bidir_bfs import bidirectional_bfs
+from utils.ui_helpers import set_window_icon, draw_wrapped_messages
 
 # --- Constants ---
 CELL_SIZE = 28
 ROWS, COLS = 22, 36
-WIDTH, HEIGHT = 1200, 800
+WIDTH, HEIGHT = 1024, 680
 FPS = 60
 
 WHITE = (255,255,255)
@@ -64,15 +65,17 @@ def get_cell_from_pos(pos):
         return row, col
     return None, None
 
-def show_message(win, font, msg, color=BLACK, y_offset=0):
-    text = font.render(msg, True, color)
-    win.blit(text, (10, HEIGHT-30+y_offset))
+def show_message(win, font, msg, color=BLACK, y_abs=None):
+    # This is now a thin wrapper or can be removed if we use draw_wrapped_messages
+    pass
 
 # --- Main Visualizer ---
 def run_grid_visualizer():
+    global WIDTH, HEIGHT
     pygame.init()
-    win = pygame.display.set_mode((WIDTH, HEIGHT+80))
+    win = pygame.display.set_mode((WIDTH, HEIGHT+80), pygame.RESIZABLE)
     pygame.display.set_caption("Grid Pathfinding Visualizer")
+    set_window_icon()
     font = pygame.font.SysFont(None, 24)
     clock = pygame.time.Clock()
     grid = Grid(ROWS, COLS)
@@ -126,14 +129,20 @@ def run_grid_visualizer():
                 surf = help_font.render(line, True, (30, 30, 80))
                 rect = surf.get_rect(center=(WIDTH//2, 60 + i*38))
                 win.blit(surf, rect)
-        # Draw instructions and error below the grid (drawn even if help is up, but overlay covers it)
-        show_message(win, font, message, DARK_BLUE, y_offset=40)
-        if error_msg:
-            show_message(win, font, error_msg, ERROR_COLOR, y_offset=70)
+        # Draw messages using the wrapper
+        msgs = []
+        if message: msgs.append((message, DARK_BLUE))
+        if error_msg: msgs.append((error_msg, ERROR_COLOR))
+        draw_wrapped_messages(win, font, msgs, WIDTH - 40, HEIGHT + 60)
+        
         pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            elif event.type == pygame.VIDEORESIZE:
+                WIDTH = max(event.w, 400)
+                HEIGHT = max(event.h - 80, 200)
+                win = pygame.display.set_mode((WIDTH, HEIGHT + 80), pygame.RESIZABLE)
             try:
                 if event.type == pygame.MOUSEMOTION:
                     row, col = get_cell_from_pos(pygame.mouse.get_pos())
@@ -237,7 +246,7 @@ def run_algo_with_vis(algo_func, grid, start, end, win, font):
         # Process events to keep window responsive during animation
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit(); exit()
+                return [], set()
         if isinstance(step, tuple) and step[0] == 'visit':
             cell = step[1]
             visited.add(cell)
