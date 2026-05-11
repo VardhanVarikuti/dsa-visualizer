@@ -10,6 +10,9 @@ spec:
     image: docker:24.0.5-dind
     securityContext:
       privileged: true
+    env:
+    - name: DOCKER_TLS_CERTDIR
+      value: ""
     command:
     - dockerd-entrypoint.sh
     args:
