@@ -13,11 +13,7 @@ spec:
     env:
     - name: DOCKER_TLS_CERTDIR
       value: ""
-    command:
-    - dockerd-entrypoint.sh
-    args:
-    - --host=tcp://127.0.0.1:2375
-    - --host=unix:///var/run/docker.sock
+    
     tty: true
 
   - name: jnlp
