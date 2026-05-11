@@ -82,7 +82,3 @@ resource "aws_instance" "dsa_visualizer_server" {
               usermod -aG docker ubuntu
               EOF
 }
-
-output "public_ip" {
-  value = aws_instance.dsa_visualizer_server.public_ip
-}

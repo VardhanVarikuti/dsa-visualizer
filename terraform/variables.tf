@@ -9,8 +9,8 @@ variable "instance_type" {
 }
 
 variable "ami_id" {
-  description = "AMI ID for Amazon Linux 2023"
-  default     = "ami-0f5ee92e2d63afc18" # Update with actual AMI ID if needed
+  description = "AMI ID for Ubuntu 24.04 LTS"
+  default     = "ami-0ad21ae1d0696ad58" # Ubuntu 24.04 in ap-south-1
 }
 
 variable "key_name" {
