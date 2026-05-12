@@ -25,9 +25,11 @@ spec:
     image: jenkins/inbound-agent:latest
 
   - name: kubectl
-    image: bitnami/kubectl:latest
+    image: alpine/k8s:1.29.4
     command:
-    - cat
+    - sleep
+    args:
+    - "9999999"
     tty: true
 '''
         }
