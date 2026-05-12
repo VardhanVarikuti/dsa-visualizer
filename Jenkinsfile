@@ -23,6 +23,12 @@ spec:
 
   - name: jnlp
     image: jenkins/inbound-agent:latest
+
+  - name: kubectl
+    image: bitnami/kubectl:latest
+    command:
+    - cat
+    tty: true
 '''
         }
     }
@@ -90,14 +96,18 @@ spec:
 
         stage('Deploy to Kubernetes') {
             steps {
-                sh '''
-                kubectl apply -f kubernetes/deployment.yaml
-                kubectl apply -f kubernetes/service.yaml
+                container('kubectl') {
+                    withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                        sh '''
+                        kubectl apply -f kubernetes/deployment.yaml
+                        kubectl apply -f kubernetes/service.yaml
 
-                kubectl rollout restart deployment dsa-visualizer
-                '''
+                        kubectl rollout restart deployment dsa-visualizer
+                        '''
+                    }
+                }
             }
-        }    
+        }
 
         stage('List Docker Images') {
             steps {
