@@ -13,7 +13,7 @@ sleep 2
 
 # 3. Start x11vnc to share display :99
 echo "Starting x11vnc..."
-x11vnc -display :99 -forever -nopw -listen localhost -xkb &
+x11vnc -display :99 -forever -shared -nopw -listen localhost -xkb &
 sleep 2
 
 # 4. Start noVNC proxy
