@@ -77,6 +77,7 @@ class UndirectedGraphVisualizer:
         pygame.display.set_caption("Undirected Graph Visualizer")
         set_window_icon()
         self.font = pygame.font.SysFont(None, FONT_SIZE)
+        self.status_font = pygame.font.SysFont(None, STATUS_FONT_SIZE)
         self.nodes = []
         self.edges = []
         self.graph = Graph(directed=False)
@@ -464,8 +465,9 @@ class UndirectedGraphVisualizer:
                 btn.draw(self.win, self.font)
             self.run_button.draw(self.win, self.font)
         # Draw current mode
-        mode_surf = self.font.render(f"Mode: {self.current_mode}", True, (80, 80, 80))
-        self.win.blit(mode_surf, (30, win_height-40))
+        mode_text = f"Mode: {self.current_mode}"
+        mode_surf = self.status_font.render(mode_text, True, (100, 100, 100))
+        self.win.blit(mode_surf, (20, win_height - 22))
         # Draw messages
         self.draw_bottom_messages()
         if self.show_help:
@@ -516,7 +518,7 @@ class UndirectedGraphVisualizer:
         if hasattr(self, 'animating') and self.animating:
              messages.append((f"Animation speed: {self.animation_delay} ms (+/-)", (80, 80, 80)))
 
-        draw_wrapped_messages(self.win, self.font, messages, win_width - 100, win_height - 25)
+        draw_wrapped_messages(self.win, self.font, messages, win_width - 100, win_height - 55)
 
     def show_message(self, msg, color, y_abs):
         win_width, _ = self.win.get_size()

@@ -88,6 +88,17 @@ spec:
             }
         }
 
+        stage('Deploy to Kubernetes') {
+            steps {
+                sh '''
+                kubectl apply -f kubernetes/deployment.yaml
+                kubectl apply -f kubernetes/service.yaml
+
+                kubectl rollout restart deployment dsa-visualizer
+                '''
+            }
+        }    
+
         stage('List Docker Images') {
             steps {
                 container('docker') {

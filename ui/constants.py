@@ -4,6 +4,7 @@ WIDTH, HEIGHT = 1024, 680
 NODE_RADIUS = 20
 FONT_SIZE = 28
 BUTTON_FONT_SIZE = 20
+STATUS_FONT_SIZE = 18
 ICON_PATH = "assets/icon.png"
 
 # Colorblind-friendly palette (ColorBrewer Set2)
