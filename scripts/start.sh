@@ -30,8 +30,9 @@ export SDL_VIDEODRIVER=x11
 echo "Starting Pygame Visualizer in xterm..."
 # Remove 2>/dev/null to see errors in docker logs
 while true; do
-    echo "Launching xterm..."
-    xterm -fa 'Monospace' -fs 12 -geometry 100x30+10+10 -hold -e "python main.py"
-    echo "xterm exited with status $?. Restarting in 5 seconds..."
-    sleep 5
+    echo "Launching application..."
+    # Removed -hold so xterm closes on app exit, triggering the loop to restart it
+    xterm -fa 'Monospace' -fs 12 -geometry 100x30+10+10 -e "python main.py"
+    echo "Application exited. Restarting in 2 seconds..."
+    sleep 2
 done
