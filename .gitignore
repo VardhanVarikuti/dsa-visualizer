@@ -207,3 +207,6 @@ terraform/.terraform.lock.hcl
 
 # Docker
 docker-compose.override.yml
+
+
+DEVOPS_PRESENTATION.md
