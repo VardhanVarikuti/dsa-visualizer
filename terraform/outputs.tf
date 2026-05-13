@@ -1,4 +1,4 @@
 output "public_ip" {
-  description = "Public IP of the EC2 instance"
-  value       = aws_instance.dsa_visualizer_server.public_ip
+  description = "Static Public IP (Elastic IP) of the DevOps server"
+  value       = aws_eip.dsa_eip.public_ip
 }
